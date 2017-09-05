@@ -63,7 +63,7 @@ class WindowsAccentColors {
         [rowData[0]]: rowData[2]
       })
     }, {}) : {
-      AppsUseLightTheme: false,
+      AppsUseLightTheme: true,
       ColorPrevalence: false,
     }
 
