@@ -51,6 +51,19 @@ class WindowsAccentColors {
    */
   reload () {
     const os = require('os')
+    const themeData = require('child_process')
+    .execSync('REG QUERY HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize')
+    .toString('utf-8')
+    .trim()
+    .split(os.EOL)
+    .slice(1)
+    .reduce((carry, row) => {
+      const rowData = row.trim().split('    ')
+      return Object.assign({}, carry, {
+        [rowData[0]]: rowData[2]
+      })
+    }, {})
+
     this.accentData = Object.assign(
       require('child_process')
         .execSync('REG QUERY HKCU\\SOFTWARE\\Microsoft\\Windows\\DWM')
@@ -64,18 +77,10 @@ class WindowsAccentColors {
             [rowData[0]]: rowData[2]
           })
         }, {}),
-        require('child_process')
-        .execSync('REG QUERY HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize')
-        .toString('utf-8')
-        .trim()
-        .split(os.EOL)
-        .slice(1)
-        .reduce((carry, row) => {
-          const rowData = row.trim().split('    ')
-          return Object.assign({}, carry, {
-            [rowData[0]]: rowData[2]
-          })
-        }, {})
+      {
+        AppsUseLightTheme: themeData.AppsUseLightTheme,
+        ColorPrevalence: themeData.ColorPrevalence,
+      }
     )
     
     
