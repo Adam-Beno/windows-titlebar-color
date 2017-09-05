@@ -51,18 +51,34 @@ class WindowsAccentColors {
    */
   reload () {
     const os = require('os')
-    this.accentData = require('child_process')
-      .execSync('REG QUERY HKCU\\SOFTWARE\\Microsoft\\Windows\\DWM')
-      .toString('utf-8')
-      .trim()
-      .split(os.EOL)
-      .slice(1)
-      .reduce((carry, row) => {
-        const rowData = row.trim().split('    ')
-        return Object.assign({}, carry, {
-          [rowData[0]]: rowData[2]
-        })
-      }, {})
+    this.accentData = Object.assign(
+      require('child_process')
+        .execSync('REG QUERY HKCU\\SOFTWARE\\Microsoft\\Windows\\DWM')
+        .toString('utf-8')
+        .trim()
+        .split(os.EOL)
+        .slice(1)
+        .reduce((carry, row) => {
+          const rowData = row.trim().split('    ')
+          return Object.assign({}, carry, {
+            [rowData[0]]: rowData[2]
+          })
+        }, {}),
+        require('child_process')
+        .execSync('REG QUERY HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize')
+        .toString('utf-8')
+        .trim()
+        .split(os.EOL)
+        .slice(1)
+        .reduce((carry, row) => {
+          const rowData = row.trim().split('    ')
+          return Object.assign({}, carry, {
+            [rowData[0]]: rowData[2]
+          })
+        }, {})
+    )
+    
+    
 
     // The keys that should be handled as booleans
     const booleans = [
@@ -72,7 +88,10 @@ class WindowsAccentColors {
       'ColorizationOpaqueBlend',
       'EnableAeroPeek',
       'ColorPrevalence',
-      'EnableWindowColorization'
+      'EnableWindowColorization',
+      'AppsUseLightTheme',
+      'ColorPrevalence',
+      'EnableTransparency',
     ]
 
     // We'll just handle everything unknown as a color
