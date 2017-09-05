@@ -51,7 +51,7 @@ class WindowsAccentColors {
    */
   reload () {
     const os = require('os')
-    const themeData = require('child_process')
+    const themeData = this.isWin10 ? require('child_process')
     .execSync('REG QUERY HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize')
     .toString('utf-8')
     .trim()
@@ -62,7 +62,10 @@ class WindowsAccentColors {
       return Object.assign({}, carry, {
         [rowData[0]]: rowData[2]
       })
-    }, {})
+    }, {}) : {
+      AppsUseLightTheme: false,
+      ColorPrevalence: false,
+    }
 
     this.accentData = Object.assign(
       require('child_process')
